@@ -1,12 +1,22 @@
-// import express from 'express';
-// import faqController = require('../controllers/faq.controller');
+import { Router } from "express";
+import { FaqController } from "../controllers/faqController";
 
-// const router = express.Router();
+const router = Router();
+const faqController = new FaqController();
 
-// // router.get('/', faqController.getAllFaqs);
-// // router.get('/:id', faqController.getFaqById);
-// router.post('/', faqController.createFaq);
-// // router.put('/:id', faqController.updateFaq);
-// // router.delete('/:id', faqController.deleteFaq);
+// Admin routes (for FAQ management)
+router.post("/", faqController.createFaq);
+router.get("/", faqController.getAllFaqs);
+router.get("/stats", faqController.getFaqStats);
+router.put("/reorder", faqController.reorderFaqs);
+router.get("/:id", faqController.getFaqById);
+router.put("/:id", faqController.updateFaq);
+router.delete("/:id", faqController.deleteFaq);
 
-// module.exports = router;
+// Public routes (for frontend consumption)
+router.get("/public/published", faqController.getPublishedFaqs);
+router.get("/public/category/:category", faqController.getFaqsByCategory);
+router.patch("/public/:id/helpful", faqController.markHelpful);
+router.patch("/public/:id/not-helpful", faqController.markNotHelpful);
+
+export default router;

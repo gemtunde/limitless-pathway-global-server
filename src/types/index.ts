@@ -181,3 +181,83 @@ export interface EventStats {
 export interface CountryStats {
   overview: StatisticsOverview;
 }
+
+export interface ServiceResult<T = any> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  errors?: string[];
+}
+
+// Statistics Types
+export interface ApplicationStats {
+  total: number;
+  byStatus: Record<string, number>;
+  byPriority: Record<string, number>;
+}
+
+export interface ServiceStats {
+  total: number;
+  byStatus: Record<string, number>;
+  byIcon: Record<string, number>;
+  byColor: Record<string, number>;
+}
+
+// Filter and Sort Types
+export interface BaseQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}
+
+export interface ApplicationFilters extends BaseQueryParams {
+  status?: string;
+  priority?: string;
+  country?: string;
+  sortBy?: "createdAt" | "updatedAt" | "firstName" | "lastName" | "email";
+}
+
+export interface ServiceFilters extends BaseQueryParams {
+  isActive?: boolean;
+  sortBy?: "createdAt" | "updatedAt" | "title";
+}
+
+export interface MongoFilter {
+  [key: string]: any;
+  $or?: Array<{ [key: string]: RegExp | string }>;
+}
+
+export interface SortOptions {
+  [key: string]: 1 | -1;
+}
+export interface PaginatedResponse<T> {
+  data: T[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+export interface ApiResponse<T = any> {
+  success: boolean;
+  message: string;
+  data?: T;
+  count?: number;
+  errors?: Array<{
+    field: string;
+    message: string;
+  }>;
+}
+
+export interface ServiceResponse {
+  id: string;
+  title: string;
+  description: string;
+  icon: "globe" | "graduation-cap" | "users" | "book";
+  color: "green" | "red" | "blue" | "yellow";
+  features: string;
+  createdAt: string;
+  updatedAt: string;
+}

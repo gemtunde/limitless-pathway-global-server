@@ -10,7 +10,7 @@ import countryRoutes from "./routes/country.routes";
 import blogRoutes from "./routes/blog.routes";
 import faqRoutes from "./routes/faq.routes";
 import teamRoutes from "./routes/team.routes";
-//import applicationRoutes from "./routes/application.routes"
+import applicationRoutes from "./routes/application.routes";
 import serviceRoutes from "./routes/service.routes";
 
 const app = express();
@@ -38,7 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/faqs", faqRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/blog", blogRoutes);
-//app.use('/api/applications', applicationRoutes);
+app.use("/api/applications", applicationRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/countries", countryRoutes);
 app.use("/api/services", serviceRoutes);

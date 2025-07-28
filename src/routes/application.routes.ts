@@ -13,7 +13,7 @@ router.post("/", applicationController.createApplication);
 // @desc    Get all applications with filtering and pagination
 // @access  Public
 // Query params: page, limit, status, priority, country, search, sortBy, sortOrder
-router.get("/", applicationController.getAllApplications);
+//router.get("/", applicationController.getAllApplications);
 
 // @route   GET /api/applications/stats
 // @desc    Get application statistics

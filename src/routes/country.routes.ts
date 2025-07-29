@@ -4,7 +4,7 @@ import countryController from "../controllers/countryController";
 const router = express.Router();
 
 // GET /api/countries - Get all countries with pagination and filtering
-//router.get("/", countryController.getAllCountries);
+router.get("/", countryController.getAllCountries);
 
 // GET /api/countries/active - Get active countries only
 //router.get("/active", countryController.getActiveCountries);
@@ -22,9 +22,9 @@ const router = express.Router();
 router.post("/", countryController.createCountry);
 
 // PUT /api/countries/:id - Update country
-//router.put("/:id", countryController.updateCountry);
+router.put("/:id", countryController.updateCountry);
 
 // DELETE /api/countries/:id - Delete country
-//router.delete("/:id", countryController.deleteCountry);
+router.delete("/:id", countryController.deleteCountry);
 
 export default router;

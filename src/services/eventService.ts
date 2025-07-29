@@ -102,52 +102,52 @@ class EventService {
   }
 
   // Update event
-  // async updateEvent(id: string, updateData: Partial<IEvent>): Promise<IEvent> {
-  //   try {
-  //     // Convert date strings to Date objects
-  //     if (updateData.date && typeof updateData.date === "string") {
-  //       updateData.date = new Date(updateData.date);
-  //     }
-  //     if (
-  //       updateData.registrationDeadline &&
-  //       typeof updateData.registrationDeadline === "string"
-  //     ) {
-  //       updateData.registrationDeadline = new Date(
-  //         updateData.registrationDeadline
-  //       );
-  //     }
+  async updateEvent(id: string, updateData: Partial<IEvent>): Promise<IEvent> {
+    try {
+      // Convert date strings to Date objects
+      if (updateData.date && typeof updateData.date === "string") {
+        updateData.date = new Date(updateData.date);
+      }
+      if (
+        updateData.registrationDeadline &&
+        typeof updateData.registrationDeadline === "string"
+      ) {
+        updateData.registrationDeadline = new Date(
+          updateData.registrationDeadline
+        );
+      }
 
-  //     const event = await Event.findByIdAndUpdate(
-  //       id,
-  //       { ...updateData, updatedAt: new Date() },
-  //       { new: true, runValidators: true }
-  //     );
+      const event = await Event.findByIdAndUpdate(
+        id,
+        { ...updateData, updatedAt: new Date() },
+        { new: true, runValidators: true }
+      );
 
-  //     if (!event) {
-  //       throw new Error("Event not found");
-  //     }
+      if (!event) {
+        throw new Error("Event not found");
+      }
 
-  //     return event;
-  //   } catch (error: any) {
-  //     if (error.code === 11000) {
-  //       throw new Error("Event with this title already exists");
-  //     }
-  //     throw new Error(`Error updating event: ${error.message}`);
-  //   }
-  // }
+      return event;
+    } catch (error: any) {
+      if (error.code === 11000) {
+        throw new Error("Event with this title already exists");
+      }
+      throw new Error(`Error updating event: ${error.message}`);
+    }
+  }
 
   // Delete event
-  // async deleteEvent(id: string): Promise<IEvent> {
-  //   try {
-  //     const event = await Event.findByIdAndDelete(id);
-  //     if (!event) {
-  //       throw new Error("Event not found");
-  //     }
-  //     return event;
-  //   } catch (error) {
-  //     throw new Error(`Error deleting event: ${(error as Error).message}`);
-  //   }
-  // }
+  async deleteEvent(id: string): Promise<IEvent> {
+    try {
+      const event = await Event.findByIdAndDelete(id);
+      if (!event) {
+        throw new Error("Event not found");
+      }
+      return event;
+    } catch (error) {
+      throw new Error(`Error deleting event: ${(error as Error).message}`);
+    }
+  }
 
   // Get upcoming events
   async getUpcomingEvents(limit: number = 5): Promise<IEvent[]> {

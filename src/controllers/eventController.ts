@@ -11,44 +11,46 @@ import {
 
 class EventController {
   // Get all events
-  //   async getAllEvents(req: Request<{}, any, any, EventQuery>, res: Response) {
-  //     try {
-  //       const result = await eventService.getAllEvents(req.query);
-  //       const response: ApiResponse<IEvent[]> = {
-  //         success: true,
-  //         message: 'Events retrieved successfully',
-  //         data: result.events,
-  //         pagination: result.pagination
-  //       };
-  //       res.status(200).json(response);
-  //     } catch (error) {
-  //       const response: ApiResponse<never> = {
-  //         success: false,
-  //         message: (error as Error).message
-  //       };
-  //       res.status(500).json(response);
-  //     }
-  //   }
+  async getAllEvents(req: Request<{}, any, any, EventQuery>, res: Response) {
+    try {
+      const result = await eventService.getAllEvents(req.query);
+      const response: ApiResponse<IEvent[]> = {
+        success: true,
+        message: "Events retrieved successfully",
+        data: result.events,
+        pagination: result.pagination,
+      };
+      res.status(200).json(response);
+    } catch (error) {
+      const response: ApiResponse<never> = {
+        success: false,
+        message: (error as Error).message,
+      };
+      res.status(500).json(response);
+    }
+  }
 
   // Get event by ID
-  //   async getEventById(req: Request<{ id: string }>, res: Response) {
-  //     try {
-  //       const event = await eventService.getEventById(req.params.id);
-  //       const response: ApiResponse<IEvent> = {
-  //         success: true,
-  //         message: 'Event retrieved successfully',
-  //         data: event
-  //       };
-  //       res.status(200).json(response);
-  //     } catch (error) {
-  //       const statusCode = (error as Error).message.includes('not found') ? 404 : 500;
-  //       const response: ApiResponse<never> = {
-  //         success: false,
-  //         message: (error as Error).message
-  //       };
-  //       res.status(statusCode).json(response);
-  //     }
-  //   }
+  async getEventById(req: Request<{ id: string }>, res: Response) {
+    try {
+      const event = await eventService.getEventById(req.params.id);
+      const response: ApiResponse<IEvent> = {
+        success: true,
+        message: "Event retrieved successfully",
+        data: event,
+      };
+      res.status(200).json(response);
+    } catch (error) {
+      const statusCode = (error as Error).message.includes("not found")
+        ? 404
+        : 500;
+      const response: ApiResponse<never> = {
+        success: false,
+        message: (error as Error).message,
+      };
+      res.status(statusCode).json(response);
+    }
+  }
 
   // Create new event
   async createEvent(req: Request, res: Response) {
@@ -87,60 +89,65 @@ class EventController {
   }
 
   // Update event
-  //   async updateEvent(req: Request<{ id: string }>, res: Response) {
-  //     try {
-  //       // Validate request body
-  //       const validationResult = updateEventSchema.safeParse(req.body);
-  //       if (!validationResult.success) {
-  //         const response: ApiResponse<never> = {
-  //           success: false,
-  //           message: 'Validation failed',
-  //           errors: validationResult.error.errors.map(err => ({
-  //             field: err.path.join('.'),
-  //             message: err.message
-  //           }))
-  //         };
-  //         return res.status(400).json(response);
-  //       }
+  async updateEvent(req: Request<{ id: string }>, res: Response) {
+    try {
+      // Validate request body
+      const validationResult = updateEventSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        const response: ApiResponse<never> = {
+          success: false,
+          message: "Validation failed",
+          errors: validationResult.error.errors.map((err) => ({
+            field: err.path.join("."),
+            message: err.message,
+          })),
+        };
+        return res.status(400).json(response);
+      }
 
-  //       const event = await eventService.updateEvent(req.params.id, validationResult.data);
-  //       const response: ApiResponse<IEvent> = {
-  //         success: true,
-  //         message: 'Event updated successfully',
-  //         data: event
-  //       };
-  //       res.status(200).json(response);
-  //     } catch (error) {
-  //       let statusCode = 500;
-  //       if ((error as Error).message.includes('not found')) statusCode = 404;
-  //       if ((error as Error).message.includes('already exists')) statusCode = 409;
+      const event = await eventService.updateEvent(
+        req.params.id,
+        validationResult.data
+      );
+      const response: ApiResponse<IEvent> = {
+        success: true,
+        message: "Event updated successfully",
+        data: event,
+      };
+      res.status(200).json(response);
+    } catch (error) {
+      let statusCode = 500;
+      if ((error as Error).message.includes("not found")) statusCode = 404;
+      if ((error as Error).message.includes("already exists")) statusCode = 409;
 
-  //       const response: ApiResponse<never> = {
-  //         success: false,
-  //         message: (error as Error).message
-  //       };
-  //       res.status(statusCode).json(response);
-  //     }
-  //   }
+      const response: ApiResponse<never> = {
+        success: false,
+        message: (error as Error).message,
+      };
+      res.status(statusCode).json(response);
+    }
+  }
 
   // Delete event
-  //   async deleteEvent(req: Request<{ id: string }>, res: Response) {
-  //     try {
-  //       await eventService.deleteEvent(req.params.id);
-  //       const response: ApiResponse<never> = {
-  //         success: true,
-  //         message: 'Event deleted successfully'
-  //       };
-  //       res.status(200).json(response);
-  //     } catch (error) {
-  //       const statusCode = (error as Error).message.includes('not found') ? 404 : 500;
-  //       const response: ApiResponse<never> = {
-  //         success: false,
-  //         message: (error as Error).message
-  //       };
-  //       res.status(statusCode).json(response);
-  //     }
-  //   }
+  async deleteEvent(req: Request<{ id: string }>, res: Response) {
+    try {
+      await eventService.deleteEvent(req.params.id);
+      const response: ApiResponse<never> = {
+        success: true,
+        message: "Event deleted successfully",
+      };
+      res.status(200).json(response);
+    } catch (error) {
+      const statusCode = (error as Error).message.includes("not found")
+        ? 404
+        : 500;
+      const response: ApiResponse<never> = {
+        success: false,
+        message: (error as Error).message,
+      };
+      res.status(statusCode).json(response);
+    }
+  }
 
   // Get upcoming events
   //   async getUpcomingEvents(req: Request, res: Response) {

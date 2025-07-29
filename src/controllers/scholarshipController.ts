@@ -11,24 +11,27 @@ import {
 
 class ScholarshipController {
   // Get all scholarships
-  // async getAllScholarships(req: Request<{}, any, any, ScholarshipQuery>, res: Response) {
-  //   try {
-  //     const result = await scholarshipService.getAllScholarships(req.query);
-  //     const response: ApiResponse<IScholarship[]> = {
-  //       success: true,
-  //       message: 'Scholarships retrieved successfully',
-  //       data: result.scholarships,
-  //       pagination: result.pagination
-  //     };
-  //     res.status(200).json(response);
-  //   } catch (error) {
-  //     const response: ApiResponse<never> = {
-  //       success: false,
-  //       message: (error as Error).message
-  //     };
-  //     res.status(500).json(response);
-  //   }
-  // }
+  async getAllScholarships(
+    req: Request<{}, any, any, ScholarshipQuery>,
+    res: Response
+  ) {
+    try {
+      const result = await scholarshipService.getAllScholarships(req.query);
+      const response: ApiResponse<IScholarship[]> = {
+        success: true,
+        message: "Scholarships retrieved successfully",
+        data: result.scholarships,
+        pagination: result.pagination,
+      };
+      res.status(200).json(response);
+    } catch (error) {
+      const response: ApiResponse<never> = {
+        success: false,
+        message: (error as Error).message,
+      };
+      res.status(500).json(response);
+    }
+  }
 
   // Get scholarship by ID
   // async getScholarshipById(req: Request<{ id: string }>, res: Response) {
@@ -89,60 +92,65 @@ class ScholarshipController {
   }
 
   // Update scholarship
-  // async updateScholarship(req: Request<{ id: string }>, res: Response) {
-  //   try {
-  //     // Validate request body
-  //     const validationResult = updateScholarshipSchema.safeParse(req.body);
-  //     if (!validationResult.success) {
-  //       const response: ApiResponse<never> = {
-  //         success: false,
-  //         message: 'Validation failed',
-  //         errors: validationResult.error.errors.map(err => ({
-  //           field: err.path.join('.'),
-  //           message: err.message
-  //         }))
-  //       };
-  //       return res.status(400).json(response);
-  //     }
+  async updateScholarship(req: Request<{ id: string }>, res: Response) {
+    try {
+      // Validate request body
+      const validationResult = updateScholarshipSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        const response: ApiResponse<never> = {
+          success: false,
+          message: "Validation failed",
+          errors: validationResult.error.errors.map((err) => ({
+            field: err.path.join("."),
+            message: err.message,
+          })),
+        };
+        return res.status(400).json(response);
+      }
 
-  //     const scholarship = await scholarshipService.updateScholarship(req.params.id, validationResult.data);
-  //     const response: ApiResponse<IScholarship> = {
-  //       success: true,
-  //       message: 'Scholarship updated successfully',
-  //       data: scholarship
-  //     };
-  //     res.status(200).json(response);
-  //   } catch (error) {
-  //     let statusCode = 500;
-  //     if ((error as Error).message.includes('not found')) statusCode = 404;
-  //     if ((error as Error).message.includes('already exists')) statusCode = 409;
+      const scholarship = await scholarshipService.updateScholarship(
+        req.params.id,
+        validationResult.data
+      );
+      const response: ApiResponse<IScholarship> = {
+        success: true,
+        message: "Scholarship updated successfully",
+        data: scholarship,
+      };
+      res.status(200).json(response);
+    } catch (error) {
+      let statusCode = 500;
+      if ((error as Error).message.includes("not found")) statusCode = 404;
+      if ((error as Error).message.includes("already exists")) statusCode = 409;
 
-  //     const response: ApiResponse<never> = {
-  //       success: false,
-  //       message: (error as Error).message
-  //     };
-  //     res.status(statusCode).json(response);
-  //   }
-  // }
+      const response: ApiResponse<never> = {
+        success: false,
+        message: (error as Error).message,
+      };
+      res.status(statusCode).json(response);
+    }
+  }
 
   // Delete scholarship
-  // async deleteScholarship(req: Request<{ id: string }>, res: Response) {
-  //   try {
-  //     await scholarshipService.deleteScholarship(req.params.id);
-  //     const response: ApiResponse<never> = {
-  //       success: true,
-  //       message: 'Scholarship deleted successfully'
-  //     };
-  //     res.status(200).json(response);
-  //   } catch (error) {
-  //     const statusCode = (error as Error).message.includes('not found') ? 404 : 500;
-  //     const response: ApiResponse<never> = {
-  //       success: false,
-  //       message: (error as Error).message
-  //     };
-  //     res.status(statusCode).json(response);
-  //   }
-  // }
+  async deleteScholarship(req: Request<{ id: string }>, res: Response) {
+    try {
+      await scholarshipService.deleteScholarship(req.params.id);
+      const response: ApiResponse<never> = {
+        success: true,
+        message: "Scholarship deleted successfully",
+      };
+      res.status(200).json(response);
+    } catch (error) {
+      const statusCode = (error as Error).message.includes("not found")
+        ? 404
+        : 500;
+      const response: ApiResponse<never> = {
+        success: false,
+        message: (error as Error).message,
+      };
+      res.status(statusCode).json(response);
+    }
+  }
 
   // Get scholarship statistics
   // async getScholarshipStats(req: Request, res: Response) {

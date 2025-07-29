@@ -8,64 +8,65 @@ import {
 
 class ScholarshipService {
   // Get all scholarships with optional filtering and pagination
-  //   async getAllScholarships(query: ScholarshipQuery = {}) {
-  //     const {
-  //       page = '1',
-  //       limit = '10',
-  //       search,
-  //       status,
-  //       category,
-  //       level,
-  //       sortBy = 'createdAt',
-  //       sortOrder = 'desc'
-  //     } = query;
+  async getAllScholarships(query: ScholarshipQuery = {}) {
+    const {
+      page = "1",
+      limit = "10",
+      search,
+      status,
+      category,
+      level,
+      sortBy = "createdAt",
+      sortOrder = "desc",
+    } = query;
 
-  //     const filter: any = {};
+    const filter: any = {};
 
-  //     // Add search functionality
-  //     if (search) {
-  //       filter.$text = { $search: search };
-  //     }
+    // Add search functionality
+    if (search) {
+      filter.$text = { $search: search };
+    }
 
-  //     // Add filters
-  //     if (status) filter.status = status;
-  //     if (category) filter.category = category;
-  //     if (level) filter.level = level;
+    // Add filters
+    if (status) filter.status = status;
+    if (category) filter.category = category;
+    if (level) filter.level = level;
 
-  //     // Calculate pagination
-  //     const skip = (parseInt(page) - 1) * parseInt(limit);
+    // Calculate pagination
+    const skip = (parseInt(page) - 1) * parseInt(limit);
 
-  //     // Create sort object
-  //     const sort: any = {};
-  //     sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
+    // Create sort object
+    const sort: any = {};
+    sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
-  //     try {
-  //       const scholarships = await Scholarship
-  //         .find(filter)
-  //         .sort(sort)
-  //         .skip(skip)
-  //         .limit(parseInt(limit));
+    try {
+      const scholarships = await Scholarship.find(filter)
+        .sort(sort)
+        .skip(skip)
+        .limit(parseInt(limit));
 
-  //       const total = await Scholarship.countDocuments(filter);
-  //       const totalPages = Math.ceil(total / parseInt(limit));
+      const total = await Scholarship.countDocuments(filter);
+      const totalPages = Math.ceil(total / parseInt(limit));
 
-  //       const pagination: PaginationMeta = {
-  //         currentPage: parseInt(page),
-  //         totalPages,
-  //         totalItems: total,
-  //         itemsPerPage: parseInt(limit),
-  //         hasNextPage: parseInt(page) < totalPages,
-  //         hasPrevPage: parseInt(page) > 1
-  //       };
+      const pagination: PaginationMeta = {
+        currentPage: parseInt(page),
+        totalPages,
+        totalItems: total,
+        itemsPerPage: parseInt(limit),
+        hasNextPage: parseInt(page) < totalPages,
+        hasPrevPage: parseInt(page) > 1,
+      };
 
-  //       return {
-  //         scholarships,
-  //         pagination
-  //       };
-  //     } catch (error) {
-  //       throw new Error(`Error fetching scholarships: ${(error as Error).message}`);
-  //     }
-  //   }
+      return {
+        scholarships,
+        pagination,
+      };
+    } catch (error) {
+      throw new Error(
+        `Error fetching scholarships: ${(error as Error).message}`
+      );
+    }
+  }
 
   // Get scholarship by ID
   //   async getScholarshipById(id: string): Promise<IScholarship> {
@@ -96,39 +97,44 @@ class ScholarshipService {
   }
 
   // Update scholarship
-  //   async updateScholarship(id: string, updateData: Partial<IScholarship>): Promise<IScholarship> {
-  //     try {
-  //       const scholarship = await Scholarship.findByIdAndUpdate(
-  //         id,
-  //         { ...updateData, updatedAt: new Date() },
-  //         { new: true, runValidators: true }
-  //       );
+  async updateScholarship(
+    id: string,
+    updateData: Partial<IScholarship>
+  ): Promise<IScholarship> {
+    try {
+      const scholarship = await Scholarship.findByIdAndUpdate(
+        id,
+        { ...updateData, updatedAt: new Date() },
+        { new: true, runValidators: true }
+      );
 
-  //       if (!scholarship) {
-  //         throw new Error('Scholarship not found');
-  //       }
+      if (!scholarship) {
+        throw new Error("Scholarship not found");
+      }
 
-  //       return scholarship;
-  //     } catch (error: any) {
-  //       if (error.code === 11000) {
-  //         throw new Error('Scholarship with this title already exists');
-  //       }
-  //       throw new Error(`Error updating scholarship: ${error.message}`);
-  //     }
-  //   }
+      return scholarship;
+    } catch (error: any) {
+      if (error.code === 11000) {
+        throw new Error("Scholarship with this title already exists");
+      }
+      throw new Error(`Error updating scholarship: ${error.message}`);
+    }
+  }
 
   // Delete scholarship
-  //   async deleteScholarship(id: string): Promise<IScholarship> {
-  //     try {
-  //       const scholarship = await Scholarship.findByIdAndDelete(id);
-  //       if (!scholarship) {
-  //         throw new Error('Scholarship not found');
-  //       }
-  //       return scholarship;
-  //     } catch (error) {
-  //       throw new Error(`Error deleting scholarship: ${(error as Error).message}`);
-  //     }
-  //   }
+  async deleteScholarship(id: string): Promise<IScholarship> {
+    try {
+      const scholarship = await Scholarship.findByIdAndDelete(id);
+      if (!scholarship) {
+        throw new Error("Scholarship not found");
+      }
+      return scholarship;
+    } catch (error) {
+      throw new Error(
+        `Error deleting scholarship: ${(error as Error).message}`
+      );
+    }
+  }
 
   // Get scholarships statistics
   //   async getScholarshipStats(): Promise<ScholarshipStats> {

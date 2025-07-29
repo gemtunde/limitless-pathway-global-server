@@ -104,17 +104,16 @@ class EventService {
   // Update event
   async updateEvent(id: string, updateData: Partial<IEvent>): Promise<IEvent> {
     try {
-      // Convert date strings to Date objects
+      // Keep date as a string, do not convert to Date object
       if (updateData.date && typeof updateData.date === "string") {
-        updateData.date = new Date(updateData.date);
+        updateData.date = updateData.date;
       }
       if (
         updateData.registrationDeadline &&
         typeof updateData.registrationDeadline === "string"
       ) {
-        updateData.registrationDeadline = new Date(
-          updateData.registrationDeadline
-        );
+        // Keep registrationDeadline as a string, do not convert to Date
+        updateData.registrationDeadline = updateData.registrationDeadline;
       }
 
       const event = await Event.findByIdAndUpdate(

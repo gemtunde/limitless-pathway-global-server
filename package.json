@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "clean": "rm -rf dist/",
+    "rebuild": "npm run clean && npm run build",
+    "prod": "npm run rebuild && npm start"
   },
   "keywords": [],
   "author": "",

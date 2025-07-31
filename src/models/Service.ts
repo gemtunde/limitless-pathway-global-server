@@ -1,8 +1,21 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 // Define the icon and color types
-export type IconType = "globe" | "graduation-cap" | "users" | "book";
-export type ColorType = "green" | "red" | "blue" | "yellow";
+//export type IconType = "globe" | "graduation-cap" | "users" | "book";
+export type IconType =
+  | "CheckCircle"
+  | "FileText"
+  | "GraduationCap"
+  | "Plane"
+  | "Users"
+  | "CreditCard";
+export type ColorType =
+  | "green"
+  | "red"
+  | "blue"
+  | "yellow"
+  | "orange"
+  | "purple";
 
 // Interface for the Service document
 export interface IService extends Document {
@@ -34,16 +47,25 @@ const serviceSchema = new Schema<IService>(
       type: String,
       required: [true, "Icon is required"],
       enum: {
-        values: ["globe", "graduation-cap", "users", "book"],
-        message: "Icon must be one of: globe, graduation-cap, users, book",
+        values: [
+          "CheckCircle",
+          "FileText",
+          "GraduationCap",
+          "Plane",
+          "Users",
+          "CreditCard",
+        ],
+        message:
+          "Icon must be one of: CheckCircle, FileText, GraduationCap, Plane, Users, CreditCard",
       },
     },
     color: {
       type: String,
       required: [true, "Color is required"],
       enum: {
-        values: ["green", "red", "blue", "yellow"],
-        message: "Color must be one of: green, red, blue, yellow",
+        values: ["green", "red", "blue", "yellow", "orange", "purple"],
+        message:
+          "Color must be one of: green, red, blue, yellow, orange, purple",
       },
     },
     features: {

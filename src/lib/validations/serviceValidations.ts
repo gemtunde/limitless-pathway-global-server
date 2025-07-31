@@ -1,7 +1,21 @@
 import { z } from "zod";
 
-const iconEnum = ["globe", "graduation-cap", "users", "book"] as const;
-const colorEnum = ["green", "red", "blue", "yellow"] as const;
+const iconEnum = [
+  "CheckCircle",
+  "FileText",
+  "GraduationCap",
+  "Plane",
+  "Users",
+  "CreditCard",
+] as const;
+const colorEnum = [
+  "green",
+  "red",
+  "blue",
+  "yellow",
+  "orange",
+  "purple",
+] as const;
 
 export const createServiceSchema = z.object({
   title: z

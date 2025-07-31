@@ -12,8 +12,8 @@ router.get("/", countryController.getAllCountries);
 // GET /api/countries/stats - Get country statistics
 //router.get("/stats", countryController.getCountryStats);
 
-// GET /api/countries/slug/:slug - Get country by slug
-//router.get("/slug/:slug", countryController.getCountryBySlug);
+//GET /api/countries/slug/:slug - Get country by slug
+router.get("/slug/:slug", countryController.getCountryBySlug);
 
 // GET /api/countries/:id - Get country by ID
 //router.get("/:id", countryController.getCountryById);

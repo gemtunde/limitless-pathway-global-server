@@ -15,6 +15,7 @@ router.patch("/:id/views", blogController.incrementViews);
 
 // Public routes (for frontend consumption)
 router.get("/public/published", blogController.getPublishedBlogs);
-router.get("/public/slug/:slug", blogController.getBlogBySlug);
+//router.get("/public/slug/:slug", blogController.getBlogBySlug);
+router.get("/slug/:slug", blogController.getBlogBySlug);
 
 export default router;

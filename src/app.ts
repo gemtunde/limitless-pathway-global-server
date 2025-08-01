@@ -12,6 +12,7 @@ import faqRoutes from "./routes/faq.routes";
 import teamRoutes from "./routes/team.routes";
 import applicationRoutes from "./routes/application.routes";
 import serviceRoutes from "./routes/service.routes";
+import authRoutes from "./routes/auth.routes";
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use("/api/auth", authRoutes);
 app.use("/api/faqs", faqRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/blog", blogRoutes);

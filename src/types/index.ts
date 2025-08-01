@@ -1,4 +1,11 @@
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
+import { z } from "zod";
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  registerSchema,
+  resetPasswordSchema,
+} from "../lib/validations/auth.validation";
 
 // Base interface for all documents
 export interface BaseDocument extends Document {
@@ -260,4 +267,49 @@ export interface ServiceResponse {
   features: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IUser extends Document {
+  _id: Types.ObjectId;
+  name: string;
+  email: string;
+  password: string;
+  isEmailVerified: boolean;
+  resetPasswordToken: string | null;
+  resetPasswordExpires: Date | null;
+  lastLogin: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  comparePassword(candidatePassword: string): Promise<boolean>;
+  toJSON(): Omit<IUser, "password" | "resetPasswordToken">;
+}
+
+export type RegisterFormData = z.infer<typeof registerSchema>;
+export type LoginFormData = z.infer<typeof loginSchema>;
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+
+export interface ApiResponse<T = any> {
+  success: boolean;
+  message: string;
+  data?: T;
+  errors?: Array<{
+    field: string;
+    message: string;
+  }>;
+  resetToken?: string;
+}
+
+export interface UserResponse {
+  id: string;
+  name: string;
+  email: string;
+  isEmailVerified: boolean;
+  createdAt: Date;
+  lastLogin?: Date | null;
+}
+
+export interface AuthServiceResponse {
+  message: string;
+  resetToken?: string;
 }

@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { ZodError } from "zod";
-import { ApiResponse, UserResponse } from "../types/index.js";
+import { ApiResponse, UserResponse } from "../types/index";
 import {
   forgotPasswordSchema,
   loginSchema,
   registerSchema,
   resetPasswordSchema,
-} from "../lib/validations/auth.validation.js";
-import authService from "../services/authService.js";
+} from "../lib/validations/auth.validation";
+import authService from "../services/authService";
 
 class AuthController {
   async register(req: Request, res: Response): Promise<void> {
@@ -24,7 +24,8 @@ class AuthController {
         data: {
           user: {
             id: user._id.toString(),
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             isEmailVerified: user.isEmailVerified,
             createdAt: user.createdAt,
@@ -82,7 +83,8 @@ class AuthController {
         data: {
           user: {
             id: user._id.toString(),
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             isEmailVerified: user.isEmailVerified,
             createdAt: user.createdAt,
@@ -180,7 +182,8 @@ class AuthController {
         data: {
           user: {
             id: user._id.toString(),
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
           },
         },
@@ -232,7 +235,8 @@ class AuthController {
         data: {
           user: {
             id: user._id.toString(),
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
             isEmailVerified: user.isEmailVerified,
             createdAt: user.createdAt,

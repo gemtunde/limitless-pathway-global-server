@@ -1,14 +1,11 @@
-import User from "../models/User.js";
+import User from "../models/User";
 import crypto from "crypto";
-import {
-  IUser,
-  RegisterFormData,
-  AuthServiceResponse,
-} from "../types/index.js";
+import { IUser, RegisterFormData, AuthServiceResponse } from "../types/index";
+import { sendPasswordResetEmail } from "./email.service";
 
 class AuthService {
   async registerUser(userData: RegisterFormData): Promise<IUser> {
-    const { name, email, password } = userData;
+    const { firstName, lastName, email, password } = userData;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -18,7 +15,8 @@ class AuthService {
 
     // Create new user
     const user = new User({
-      name,
+      firstName,
+      lastName,
       email,
       password,
     });
@@ -68,6 +66,8 @@ class AuthService {
 
     // In a real app, you would send an email here
     console.log(`Password reset token for ${email}: ${resetToken}`);
+    //send password reset email
+    await sendPasswordResetEmail(user.email, user.firstName, resetToken);
 
     return {
       message: "If the email exists, you will receive a reset link",

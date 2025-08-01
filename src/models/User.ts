@@ -4,7 +4,14 @@ import { IUser } from "../types/index.js";
 
 const userSchema = new Schema<IUser>(
   {
-    name: {
+    firstName: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 100,
+    },
+    lastName: {
       type: String,
       required: true,
       trim: true,

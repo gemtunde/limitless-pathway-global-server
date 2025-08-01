@@ -271,7 +271,8 @@ export interface ServiceResponse {
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   isEmailVerified: boolean;
@@ -302,7 +303,8 @@ export interface ApiResponse<T = any> {
 
 export interface UserResponse {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   isEmailVerified: boolean;
   createdAt: Date;

@@ -26,7 +26,7 @@ export default {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    from: process.env.EMAIL_FROM || "no-reply@swiftpay.com",
+    from: process.env.EMAIL_FROM || "no-reply@limitlessglobalpathways.com",
   },
   paystack: {
     baseUrl: process.env.PAYSTACK_BASE_URL || "https://api.paystack.co",

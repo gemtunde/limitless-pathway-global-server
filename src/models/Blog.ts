@@ -5,7 +5,8 @@ export interface IBlog extends Document {
   slug: string;
   excerpt: string;
   content: string;
-  featuredImage?: string;
+  image?: string;
+  //imagePublicId?: string;
   category: string;
   tags?: string;
   status: "draft" | "published" | "archived";
@@ -45,18 +46,14 @@ const blogSchema = new Schema<IBlog>(
       required: [true, "Content is required"],
       trim: true,
     },
-    featuredImage: {
+    image: {
       type: String,
-      trim: true,
-      validate: {
-        validator: function (v: string) {
-          if (!v) return true; // Optional field
-          const urlRegex = /^https?:\/\/.+/;
-          return urlRegex.test(v);
-        },
-        message: "Featured image must be a valid URL",
-      },
+      default: "",
     },
+    // imagePublicId: {
+    //   type: String,
+    //   default: "",
+    // },
     category: {
       type: String,
       required: [true, "Category is required"],

@@ -2,20 +2,23 @@ import { Router } from "express";
 import { BlogController } from "../controllers/blogController";
 
 const router = Router();
-const blogController = new BlogController();
 
-// Admin routes (for blog management)
-router.post("/", blogController.createBlog);
-router.get("/", blogController.getAllBlogs);
-router.get("/stats", blogController.getBlogStats);
-router.get("/:id", blogController.getBlogById);
-router.put("/:id", blogController.updateBlog);
-router.delete("/:id", blogController.deleteBlog);
-router.patch("/:id/views", blogController.incrementViews);
+// Create new blog post (JSON payload, no file upload)
+router.post("/", BlogController.createBlog);
 
-// Public routes (for frontend consumption)
-router.get("/public/published", blogController.getPublishedBlogs);
-//router.get("/public/slug/:slug", blogController.getBlogBySlug);
-router.get("/slug/:slug", blogController.getBlogBySlug);
+// Get all blogs with pagination and filters
+router.get("/", BlogController.getAllBlogs);
+
+// Get blog by slug (for public viewing)
+router.get("/slug/:slug", BlogController.getBlogBySlug);
+
+// Get blog by ID
+router.get("/:id", BlogController.getBlogById);
+
+// Update blog (JSON payload, no file upload)
+router.put("/:id", BlogController.updateBlog);
+
+// Delete blog
+router.delete("/:id", BlogController.deleteBlog);
 
 export default router;

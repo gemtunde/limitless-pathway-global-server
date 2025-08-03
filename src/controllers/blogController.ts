@@ -1,294 +1,224 @@
 import { Request, Response } from "express";
-// import { BlogService } from '../services/blog.service';
-// import {
-//   createBlogSchema,
-//   updateBlogSchema,
-//   blogQuerySchema,
-//   mongoIdSchema
-// } from '../validators';
-import { ZodError } from "zod";
+import { BlogService, CreateBlogData } from "../services/blogService";
+//import { createBlogSchema, updateBlogSchema, CreateBlogInput, UpdateBlogInput } from '../validations/';
+//import { ZodError } from 'zod';
 import {
-  blogQuerySchema,
   createBlogSchema,
   updateBlogSchema,
 } from "../lib/validations/blogValidations";
-import { mongoIdSchema } from "../lib/validations/faqValidation";
-import { BlogService } from "../services/blogService";
 
 export class BlogController {
-  private blogService: BlogService;
-
-  constructor() {
-    this.blogService = new BlogService();
-  }
-
-  // Create a new blog post
-  createBlog = async (req: Request, res: Response): Promise<void> => {
+  // Create new blog post
+  static async createBlog(req: Request, res: Response): Promise<Response> {
     try {
-      const validatedData = createBlogSchema.parse(req.body);
-      const blog = await this.blogService.createBlog(validatedData);
+      console.log(
+        "Received blog creation request:",
+        JSON.stringify(req.body, null, 2)
+      );
 
-      res.status(201).json({
+      // Validate request body using Zod
+      const validationResult = createBlogSchema.safeParse(req.body);
+
+      if (!validationResult.success) {
+        console.error("Validation error:", validationResult.error.errors);
+        return res.status(400).json({
+          success: false,
+          message: "Validation error",
+          errors: validationResult.error.errors.map((error) => ({
+            field: error.path.join("."),
+            message: error.message,
+          })),
+        });
+      }
+
+      const validatedData = validationResult.data;
+      console.log("Validated data:", JSON.stringify(validatedData, null, 2));
+
+      // Create blog post
+      const blog = await BlogService.createBlog(
+        validatedData as CreateBlogData
+      );
+
+      return res.status(201).json({
         success: true,
         message: "Blog post created successfully",
         data: blog,
       });
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        res.status(400).json({
-          success: false,
-          message: "Validation error",
-          errors: error.errors,
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: error.message || "Failed to create blog post",
-        });
-      }
-    }
-  };
-
-  // Get all blog posts with filtering and pagination
-  getAllBlogs = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const queryData = blogQuerySchema.parse(req.query);
-      const result = await this.blogService.getAllBlogs(queryData);
-
-      res.status(200).json({
-        success: true,
-        message: "Blog posts retrieved successfully",
-        data: result.blogs,
-        pagination: result.pagination,
+    } catch (error) {
+      console.error("Create blog error:", error);
+      return res.status(500).json({
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Internal server error",
       });
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        res.status(400).json({
-          success: false,
-          message: "Invalid query parameters",
-          errors: error.errors,
-        });
-      } else {
-        res.status(500).json({
-          success: false,
-          message: error.message || "Failed to retrieve blog posts",
-        });
-      }
     }
-  };
+  }
 
-  // Get a single blog post by ID
-  getBlogById = async (req: Request, res: Response): Promise<void> => {
+  // Get all blogs with pagination and filters
+  static async getAllBlogs(req: Request, res: Response): Promise<Response> {
     try {
-      const { id } = mongoIdSchema.parse(req.params);
-      const blog = await this.blogService.getBlogById(id);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const status = req.query.status as string;
+      const category = req.query.category as string;
+      const search = req.query.search as string;
+
+      const result = await BlogService.getAllBlogs({
+        page,
+        limit,
+        status,
+        category,
+        search,
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Blogs fetched successfully",
+        ...result,
+      });
+    } catch (error) {
+      console.error("Get blogs error:", error);
+      return res.status(500).json({
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Internal server error",
+      });
+    }
+  }
+
+  // Get blog by ID
+  static async getBlogById(req: Request, res: Response): Promise<Response> {
+    try {
+      const { id } = req.params;
+      const blog = await BlogService.getBlogById(id);
 
       if (!blog) {
-        res.status(404).json({
+        return res.status(404).json({
           success: false,
-          message: "Blog post not found",
+          message: "Blog not found",
         });
-        return;
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        message: "Blog post retrieved successfully",
+        message: "Blog fetched successfully",
         data: blog,
       });
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        res.status(400).json({
-          success: false,
-          message: "Invalid blog ID",
-          errors: error.errors,
-        });
-      } else {
-        res.status(500).json({
-          success: false,
-          message: error.message || "Failed to retrieve blog post",
-        });
-      }
+    } catch (error) {
+      console.error("Get blog error:", error);
+      return res.status(500).json({
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Internal server error",
+      });
     }
-  };
+  }
 
-  // Get a blog post by slug
-  getBlogBySlug = async (req: Request, res: Response): Promise<void> => {
+  // Get blog by slug
+  static async getBlogBySlug(req: Request, res: Response): Promise<Response> {
     try {
       const { slug } = req.params;
-      const blog = await this.blogService.getBlogBySlug(slug);
+      const blog = await BlogService.getBlogBySlug(slug);
 
       if (!blog) {
-        res.status(404).json({
+        return res.status(404).json({
           success: false,
-          message: "Blog post not found",
+          message: "Blog not found",
         });
-        return;
       }
 
-      res.status(200).json({
+      // Increment view count
+      await BlogService.incrementViews(blog._id);
+
+      return res.status(200).json({
         success: true,
-        message: "Blog post retrieved successfully",
+        message: "Blog fetched successfully",
         data: blog,
       });
-    } catch (error: any) {
-      res.status(500).json({
+    } catch (error) {
+      console.error("Get blog by slug error:", error);
+      return res.status(500).json({
         success: false,
-        message: error.message || "Failed to retrieve blog post",
+        message:
+          error instanceof Error ? error.message : "Internal server error",
       });
     }
-  };
+  }
 
-  // Update a blog post
-  updateBlog = async (req: Request, res: Response): Promise<void> => {
+  // Update blog
+  static async updateBlog(req: Request, res: Response): Promise<Response> {
     try {
-      const { id } = mongoIdSchema.parse(req.params);
-      const validatedData = updateBlogSchema.parse(req.body);
+      const { id } = req.params;
 
-      const blog = await this.blogService.updateBlog(id, validatedData);
+      console.log("Received blog update request for ID:", id);
+      console.log("Update data:", JSON.stringify(req.body, null, 2));
 
-      if (!blog) {
-        res.status(404).json({
-          success: false,
-          message: "Blog post not found",
-        });
-        return;
-      }
+      // Validate request body using Zod
+      const validationResult = updateBlogSchema.safeParse(req.body);
 
-      res.status(200).json({
-        success: true,
-        message: "Blog post updated successfully",
-        data: blog,
-      });
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        res.status(400).json({
+      if (!validationResult.success) {
+        console.error("Validation error:", validationResult.error.errors);
+        return res.status(400).json({
           success: false,
           message: "Validation error",
-          errors: error.errors,
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: error.message || "Failed to update blog post",
+          errors: validationResult.error.errors.map((error) => ({
+            field: error.path.join("."),
+            message: error.message,
+          })),
         });
       }
-    }
-  };
 
-  // Delete a blog post
-  deleteBlog = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { id } = mongoIdSchema.parse(req.params);
-      const blog = await this.blogService.deleteBlog(id);
+      const validatedData = validationResult.data;
+
+      // Update blog post
+      const blog = await BlogService.updateBlog(id, validatedData);
 
       if (!blog) {
-        res.status(404).json({
+        return res.status(404).json({
           success: false,
-          message: "Blog post not found",
+          message: "Blog not found",
         });
-        return;
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        message: "Blog post deleted successfully",
+        message: "Blog updated successfully",
         data: blog,
       });
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        res.status(400).json({
-          success: false,
-          message: "Invalid blog ID",
-          errors: error.errors,
-        });
-      } else {
-        res.status(500).json({
-          success: false,
-          message: error.message || "Failed to delete blog post",
-        });
-      }
-    }
-  };
-
-  // Increment blog views
-  incrementViews = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { id } = mongoIdSchema.parse(req.params);
-      const blog = await this.blogService.incrementViews(id);
-
-      if (!blog) {
-        res.status(404).json({
-          success: false,
-          message: "Blog post not found",
-        });
-        return;
-      }
-
-      res.status(200).json({
-        success: true,
-        message: "Blog views incremented successfully",
-        data: { views: blog.views },
-      });
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        res.status(400).json({
-          success: false,
-          message: "Invalid blog ID",
-          errors: error.errors,
-        });
-      } else {
-        res.status(500).json({
-          success: false,
-          message: error.message || "Failed to increment views",
-        });
-      }
-    }
-  };
-
-  // Get published blog posts (public endpoint)
-  getPublishedBlogs = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const queryData = blogQuerySchema.parse(req.query);
-      const result = await this.blogService.getPublishedBlogs(queryData);
-
-      res.status(200).json({
-        success: true,
-        message: "Published blog posts retrieved successfully",
-        data: result.blogs,
-        pagination: result.pagination,
-      });
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        res.status(400).json({
-          success: false,
-          message: "Invalid query parameters",
-          errors: error.errors,
-        });
-      } else {
-        res.status(500).json({
-          success: false,
-          message: error.message || "Failed to retrieve published blog posts",
-        });
-      }
-    }
-  };
-
-  // Get blog statistics
-  getBlogStats = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const stats = await this.blogService.getBlogStats();
-
-      res.status(200).json({
-        success: true,
-        message: "Blog statistics retrieved successfully",
-        data: stats,
-      });
-    } catch (error: any) {
-      res.status(500).json({
+    } catch (error) {
+      console.error("Update blog error:", error);
+      return res.status(500).json({
         success: false,
-        message: error.message || "Failed to retrieve blog statistics",
+        message:
+          error instanceof Error ? error.message : "Internal server error",
       });
     }
-  };
+  }
+
+  // Delete blog
+  static async deleteBlog(req: Request, res: Response): Promise<Response> {
+    try {
+      const { id } = req.params;
+      const deleted = await BlogService.deleteBlog(id);
+
+      if (!deleted) {
+        return res.status(404).json({
+          success: false,
+          message: "Blog not found",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Blog deleted successfully",
+      });
+    } catch (error) {
+      console.error("Delete blog error:", error);
+      return res.status(500).json({
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Internal server error",
+      });
+    }
+  }
 }

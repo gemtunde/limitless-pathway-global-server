@@ -128,7 +128,7 @@ export class BlogController {
       }
 
       // Increment view count
-      await BlogService.incrementViews(blog._id);
+      //await BlogService.incrementViews(blog._id);
 
       return res.status(200).json({
         success: true,

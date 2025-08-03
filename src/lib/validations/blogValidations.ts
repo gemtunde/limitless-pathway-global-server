@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 // Schema for image object from frontend
-const imageSchema = z
-  .object({
-    path: z.string().min(1, "Image path is required"),
-    relativePath: z.string().min(1, "Image relative path is required"),
-  })
-  .optional();
+// const imageSchema = z
+//   .object({
+//     path: z.string().min(1, "Image path is required"),
+//     relativePath: z.string().min(1, "Image relative path is required"),
+//   })
+//   .optional();
 
 // Available categories
 const categoryEnum = z.enum(
@@ -133,4 +133,4 @@ export const updateBlogSchema = z.object({
 // Type exports
 export type CreateBlogInput = z.infer<typeof createBlogSchema>;
 export type UpdateBlogInput = z.infer<typeof updateBlogSchema>;
-export type ImageInput = z.infer<typeof imageSchema>;
+//export type ImageInput = z.infer<typeof imageSchema>;

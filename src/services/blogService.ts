@@ -4,17 +4,17 @@ import slugify from "slugify";
 import fs from "fs/promises";
 import path from "path";
 
-export interface ImageData {
-  path: string;
-  relativePath: string;
-}
+// export interface ImageData {
+//   path: string;
+//   relativePath: string;
+// }
 
 export interface CreateBlogData {
   title: string;
   slug: string;
   excerpt: string;
   content: string;
-  image?: ImageData;
+  image?: string;
   category: string;
   tags?: string;
   status: "draft" | "published" | "archived";

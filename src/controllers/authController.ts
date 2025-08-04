@@ -263,6 +263,25 @@ class AuthController {
       res.status(500).json(response);
     }
   }
+
+  async logout(req: Request, res: Response): Promise<void> {
+    try {
+      res.status(200).json({
+        status: 200,
+        message: "Logged out successfully",
+        data: {
+          message: "Please remove the token from client storage",
+        },
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+      res.status(500).json({
+        status: 500,
+        message: "Internal server error",
+        data: null,
+      });
+    }
+  }
 }
 
 export default new AuthController();

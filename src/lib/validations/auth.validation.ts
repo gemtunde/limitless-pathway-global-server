@@ -66,3 +66,40 @@ export const resetPasswordSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z
+    .string()
+    .min(8, "New password must be at least 8 characters long")
+    .regex(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      "New password must contain at least one uppercase letter, one lowercase letter, and one number"
+    ),
+});
+
+export const updateProfileSchema = z
+  .object({
+    firstName: z
+      .string()
+      .min(2, "First name must be at least 2 characters long")
+      .max(50, "First name must not exceed 50 characters")
+      .optional(),
+    lastName: z
+      .string()
+      .min(2, "Last name must be at least 2 characters long")
+      .max(50, "Last name must not exceed 50 characters")
+      .optional(),
+    image: z
+      .string()
+      .url("Image must be a valid URL")
+      .optional()
+      .or(z.literal("")), // Allow empty string to remove image
+  })
+  .refine(
+    (data) => data.firstName || data.lastName || data.image !== undefined,
+    {
+      message:
+        "At least one field (firstName, lastName, or image) must be provided",
+    }
+  );

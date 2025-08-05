@@ -1,6 +1,12 @@
 import User from "../models/User";
 import crypto from "crypto";
-import { IUser, RegisterFormData, AuthServiceResponse } from "../types/index";
+import {
+  IUser,
+  RegisterFormData,
+  AuthServiceResponse,
+  ChangePasswordData,
+  UpdateProfileData,
+} from "../types/index";
 import { sendPasswordResetEmail } from "./email.service";
 
 class AuthService {
@@ -113,6 +119,51 @@ class AuthService {
     if (!user) {
       throw new Error("User not found");
     }
+    return user;
+  }
+
+  async changeUserPassword(
+    userId: string,
+    passwordData: ChangePasswordData
+  ): Promise<void> {
+    const { currentPassword, newPassword } = passwordData;
+
+    // Find user by ID
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await user.comparePassword(currentPassword);
+    if (!isCurrentPasswordValid) {
+      throw new Error("Current password is incorrect");
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+  }
+
+  async updateUserProfile(
+    userId: string,
+    profileData: UpdateProfileData
+  ): Promise<IUser> {
+    const { firstName, lastName, image } = profileData;
+
+    // Find user by ID
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Update user fields
+    if (firstName !== undefined) user.firstName = firstName;
+    if (lastName !== undefined) user.lastName = lastName;
+    if (image !== undefined) user.image = image;
+
+    // Save updated user
+    await user.save();
     return user;
   }
 }

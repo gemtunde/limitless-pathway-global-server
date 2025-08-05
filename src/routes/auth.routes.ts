@@ -11,6 +11,8 @@ router.post("/reset-password", authController.resetPassword);
 
 // User profile route
 router.get("/profile/:userId", authController.getProfile);
+router.put("/update-profile/:userId", authController.updateProfile);
+router.put("/change-password/:userId", authController.changePassword);
 router.post("/logout", authController.logout);
 
 export default router;

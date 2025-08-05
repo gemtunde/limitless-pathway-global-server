@@ -2,10 +2,12 @@ import { Request, Response } from "express";
 import { ZodError } from "zod";
 import { ApiResponse, UserResponse } from "../types/index";
 import {
+  changePasswordSchema,
   forgotPasswordSchema,
   loginSchema,
   registerSchema,
   resetPasswordSchema,
+  updateProfileSchema,
 } from "../lib/validations/auth.validation";
 import authService from "../services/authService";
 
@@ -86,6 +88,7 @@ class AuthController {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            image: user.image,
             isEmailVerified: user.isEmailVerified,
             createdAt: user.createdAt,
             lastLogin: user.lastLogin,
@@ -280,6 +283,146 @@ class AuthController {
         message: "Internal server error",
         data: null,
       });
+    }
+  }
+
+  async changePassword(req: Request, res: Response): Promise<void> {
+    try {
+      // Validate request data
+      const validatedData = changePasswordSchema.parse(req.body);
+
+      const { userId } = req.params;
+      if (!userId) {
+        const response: ApiResponse = {
+          success: false,
+          message: "Authentication required",
+        };
+        res.status(401).json(response);
+        return;
+      }
+
+      // Change password
+      await authService.changeUserPassword(userId, validatedData);
+
+      const response: ApiResponse = {
+        success: true,
+        message: "Password changed successfully",
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const response: ApiResponse = {
+          success: false,
+          message: "Validation error",
+          errors: error.errors.map((err) => ({
+            field: err.path.join("."),
+            message: err.message,
+          })),
+        };
+        res.status(400).json(response);
+        return;
+      }
+
+      if (error instanceof Error) {
+        if (error.message === "User not found") {
+          const response: ApiResponse = {
+            success: false,
+            message: error.message,
+          };
+          res.status(404).json(response);
+          return;
+        }
+
+        if (error.message === "Current password is incorrect") {
+          const response: ApiResponse = {
+            success: false,
+            message: error.message,
+          };
+          res.status(400).json(response);
+          return;
+        }
+      }
+
+      const response: ApiResponse = {
+        success: false,
+        message: "Internal server error",
+      };
+      res.status(500).json(response);
+    }
+  }
+
+  async updateProfile(req: Request, res: Response): Promise<void> {
+    try {
+      // Validate request data
+      const validatedData = updateProfileSchema.parse(req.body);
+
+      // Get user ID from authenticated request
+      //const userId = req.user?.id;
+      const { userId } = req.params;
+      if (!userId) {
+        const response: ApiResponse = {
+          success: false,
+          message: "Authentication required",
+        };
+        res.status(401).json(response);
+        return;
+      }
+
+      // Update user profile
+      const updatedUser = await authService.updateUserProfile(
+        userId,
+        validatedData
+      );
+
+      const response: ApiResponse<{ user: UserResponse }> = {
+        success: true,
+        message: "Profile updated successfully",
+        data: {
+          user: {
+            id: updatedUser._id.toString(),
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
+            email: updatedUser.email,
+            image: updatedUser.image,
+            isEmailVerified: updatedUser.isEmailVerified,
+            createdAt: updatedUser.createdAt,
+            //updatedAt: updatedUser.updatedAt,
+          },
+        },
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const response: ApiResponse = {
+          success: false,
+          message: "Validation error",
+          errors: error.errors.map((err) => ({
+            field: err.path.join("."),
+            message: err.message,
+          })),
+        };
+        res.status(400).json(response);
+        return;
+      }
+
+      if (error instanceof Error) {
+        if (error.message === "User not found") {
+          const response: ApiResponse = {
+            success: false,
+            message: error.message,
+          };
+          res.status(404).json(response);
+          return;
+        }
+      }
+
+      const response: ApiResponse = {
+        success: false,
+        message: "Internal server error",
+      };
+      res.status(500).json(response);
     }
   }
 }

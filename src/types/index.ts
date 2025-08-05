@@ -13,6 +13,12 @@ export interface BaseDocument extends Document {
   updatedAt: Date;
 }
 
+//change password
+export interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
+}
+
 // Scholarship interfaces
 export interface IScholarship extends BaseDocument {
   title: string;
@@ -274,6 +280,7 @@ export interface IUser extends Document {
   firstName: string;
   lastName: string;
   email: string;
+  image?: string;
   password: string;
   isEmailVerified: boolean;
   resetPasswordToken: string | null;
@@ -306,6 +313,7 @@ export interface UserResponse {
   firstName: string;
   lastName: string;
   email: string;
+  image?: string;
   isEmailVerified: boolean;
   createdAt: Date;
   lastLogin?: Date | null;
@@ -314,4 +322,9 @@ export interface UserResponse {
 export interface AuthServiceResponse {
   message: string;
   resetToken?: string;
+}
+export interface UpdateProfileData {
+  firstName?: string;
+  lastName?: string;
+  image?: string;
 }

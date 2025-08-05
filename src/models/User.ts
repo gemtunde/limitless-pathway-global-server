@@ -35,6 +35,10 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    image: {
+      type: String,
+      default: "",
+    },
     resetPasswordToken: {
       type: String,
       default: null,
